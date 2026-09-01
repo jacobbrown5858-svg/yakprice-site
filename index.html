@@ -22,6 +22,22 @@
   input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
   .collect{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--soft);padding-bottom:11px;white-space:nowrap}
   .collect input{width:auto}
+  .toolbar{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:10px 0 6px;flex-wrap:wrap}
+  .sort label{display:block;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .sort select{min-width:240px}
+  .filters-toggle{font:inherit;font-size:14px;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:0 14px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .filters-toggle[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+  .pill{background:var(--accent);color:#fff;border-radius:999px;font-size:12px;padding:1px 8px}
+  .filters{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin:6px 0 10px;display:grid;gap:14px}
+  .f-label,.f-group>label{display:block;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font:inherit;font-size:13px;padding:0 12px;min-height:36px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+  .f-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:320px}
+  .f-checks{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--soft)}
+  .f-checks label{display:inline-flex;align-items:center;gap:8px;min-height:36px}
+  .f-checks input{width:18px;height:18px;min-height:0;padding:0}
+  .link-btn{font:inherit;font-size:13px;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;justify-self:start}
   .status{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--soft);margin:6px 0 18px}
   .results{display:grid;gap:10px}
   .card{display:grid;grid-template-columns:96px 1fr 180px;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
@@ -45,6 +61,8 @@
     h1{font-size:24px}.lede{font-size:15px;margin-bottom:14px}
     form{grid-template-columns:1fr 1fr;gap:8px}form>div:first-child{grid-column:1/-1}.collect{grid-column:1/-1;padding:4px 0 0}
     .status{font-size:13px}
+    .toolbar{gap:8px}.sort{flex:1}.sort select{min-width:0;width:100%}.filters-toggle{flex:none}
+    .f-row{max-width:none}
     .card{grid-template-columns:72px 1fr;gap:12px;padding:10px;border-radius:10px}
     .img{width:72px;height:72px}
     h3{font-size:14px}
@@ -69,8 +87,37 @@
     <div><label for="cat">Category</label>
       <select id="cat"><option value="">All</option><option value="mattress">Mattresses</option><option value="bed">Beds</option><option value="furniture">Furniture</option><option value="lighting">Lighting</option><option value="garden">Garden</option><option value="tools">Tools</option></select>
     </div>
-    <label class="collect"><input id="collect" type="checkbox"> Collection only</label>
   </form>
+  <div class="toolbar">
+    <div class="sort">
+      <label for="sort">Order by</label>
+      <select id="sort">
+        <option value="landed">Delivered price: low to high</option>
+        <option value="landed_desc">Delivered price: high to low</option>
+        <option value="item">Item price: low to high</option>
+        <option value="delivery">Delivery cost: low to high</option>
+        <option value="fastest">Fastest delivery</option>
+        <option value="name">Name A–Z</option>
+      </select>
+    </div>
+    <button type="button" id="filtersToggle" class="filters-toggle" aria-expanded="false" aria-controls="filters">Filters <span id="filterCount" class="pill" hidden></span></button>
+  </div>
+  <div id="filters" class="filters" hidden>
+    <div class="f-group">
+      <span class="f-label">Retailer</span>
+      <div id="retailers" class="chips"></div>
+    </div>
+    <div class="f-row">
+      <div class="f-group"><label for="pmin">Min £</label><input id="pmin" type="number" inputmode="decimal" min="0" placeholder="0"></div>
+      <div class="f-group"><label for="pmax">Max £</label><input id="pmax" type="number" inputmode="decimal" min="0" placeholder="any"></div>
+    </div>
+    <div class="f-checks">
+      <label><input id="freeOnly" type="checkbox"> Free delivery only</label>
+      <label><input id="verifiedOnly" type="checkbox"> Verified delivery rules only</label>
+      <label><input id="collect" type="checkbox"> Collection only</label>
+    </div>
+    <button type="button" id="clearFilters" class="link-btn">Clear filters</button>
+  </div>
   <div class="status"><span id="region">Enter a postcode to see delivered prices</span><span id="count"></span></div>
   <div id="results" class="results"></div>
 </main>

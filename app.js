@@ -2,6 +2,8 @@
   const $ = (s) => document.querySelector(s);
   const fmt = (n) => "£" + n.toFixed(2);
   let PRODUCTS = [];
+  const state = { retailers: new Set() };
+  const daysMin = (d) => { const m = String(d || "").match(/\d+/); return m ? +m[0] : 99; };
 
   // --- postcode -> outward pieces --------------------------------------------------------
   function parsePostcode(raw) {
@@ -63,14 +65,38 @@
     const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
     return PRODUCTS.filter((p) => (!cat || p.cat === cat) && terms.every((t) => (p.title + " " + (p.brand || "") + " " + p.retailer).toLowerCase().includes(t)));
   }
+  function activeFilterCount() {
+    let n = state.retailers.size ? 1 : 0;
+    if ($("#pmin").value) n++; if ($("#pmax").value) n++;
+    if ($("#freeOnly").checked) n++; if ($("#verifiedOnly").checked) n++; if ($("#collect").checked) n++;
+    return n;
+  }
   function render() {
     const q = $("#q").value.trim(), pc = $("#pc").value.trim(), cat = $("#cat").value, collect = $("#collect").checked;
+    const pmin = parseFloat($("#pmin").value) || 0, pmax = parseFloat($("#pmax").value) || Infinity;
+    const freeOnly = $("#freeOnly").checked, verifiedOnly = $("#verifiedOnly").checked, sort = $("#sort").value;
     const pcObj = parsePostcode(pc);
     $("#region").textContent = pc ? (pcObj ? "Delivered prices for " + pcObj.district : "Enter a valid UK postcode") : "Add your postcode for delivered prices";
-    let rows = search(q, cat).map((p) => ({ p, l: landed(p, pcObj, collect) })).filter((x) => x.l);
-    rows.sort((a, b) => (a.l.total ?? 1e9) - (b.l.total ?? 1e9) || a.p.price - b.p.price);
+    const n = activeFilterCount(); const fc = $("#filterCount"); fc.hidden = !n; fc.textContent = n;
+    let rows = search(q, cat)
+      .filter((p) => !state.retailers.size || state.retailers.has(p.retailer))
+      .filter((p) => p.price >= pmin && p.price <= pmax)
+      .map((p) => ({ p, l: landed(p, pcObj, collect) })).filter((x) => x.l)
+      .filter((x) => !freeOnly || x.l.delivery === 0)
+      .filter((x) => !verifiedOnly || !x.l.est);
+    const T = (x) => x.l.total ?? 1e9;
+    const sorters = {
+      landed: (a, b) => T(a) - T(b) || a.p.price - b.p.price,
+      landed_desc: (a, b) => T(b) - T(a),
+      item: (a, b) => a.p.price - b.p.price,
+      delivery: (a, b) => (a.l.delivery ?? 1e9) - (b.l.delivery ?? 1e9) || T(a) - T(b),
+      fastest: (a, b) => daysMin(a.l.days) - daysMin(b.l.days) || T(a) - T(b),
+      name: (a, b) => a.p.title.localeCompare(b.p.title)
+    };
+    rows.sort(sorters[sort] || sorters.landed);
+    const label = { landed: "cheapest delivered first", landed_desc: "priciest delivered first", item: "cheapest item first", delivery: "cheapest delivery first", fastest: "fastest first", name: "A–Z" }[sort];
     rows = rows.slice(0, 60);
-    $("#count").textContent = rows.length ? rows.length + " results · cheapest delivered first" : (collect ? "No collection options for this search" : "No matches — try a broader search");
+    $("#count").textContent = rows.length ? rows.length + " results · " + label : (collect ? "No collection options for this search" : "No matches — try a broader search or clear filters");
     $("#results").innerHTML = rows.map(({ p, l }) => `
       <article class="card">
         <a class="img" href="${p.link}" target="_blank" rel="nofollow sponsored noopener">${p.img ? `<img src="${p.img}" alt="" loading="lazy">` : ""}</a>
@@ -86,8 +112,26 @@
       </article>`).join("");
   }
 
-  fetch("data/products.json").then((r) => r.json()).then((d) => { PRODUCTS = d; render(); });
-  ["#q", "#pc", "#cat", "#collect"].forEach((s) => $(s).addEventListener("input", render));
+  function buildRetailerChips() {
+    const names = [...new Set(PRODUCTS.map((p) => p.retailer))].sort();
+    $("#retailers").innerHTML = names.map((n) => `<button type="button" class="chip" aria-pressed="false" data-r="${n}">${n}</button>`).join("");
+    $("#retailers").addEventListener("click", (e) => {
+      const b = e.target.closest(".chip"); if (!b) return;
+      const on = b.getAttribute("aria-pressed") !== "true";
+      b.setAttribute("aria-pressed", on); on ? state.retailers.add(b.dataset.r) : state.retailers.delete(b.dataset.r);
+      render();
+    });
+  }
+  fetch("data/products.json").then((r) => r.json()).then((d) => { PRODUCTS = d; buildRetailerChips(); render(); });
+  ["#q", "#pc", "#cat", "#collect", "#pmin", "#pmax", "#freeOnly", "#verifiedOnly", "#sort"].forEach((s) => $(s).addEventListener("input", render));
+  $("#filtersToggle").addEventListener("click", () => {
+    const f = $("#filters"), open = f.hidden; f.hidden = !open; $("#filtersToggle").setAttribute("aria-expanded", open);
+  });
+  $("#clearFilters").addEventListener("click", () => {
+    state.retailers.clear(); document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", "false"));
+    ["#pmin", "#pmax"].forEach((s) => ($(s).value = "")); ["#freeOnly", "#verifiedOnly", "#collect"].forEach((s) => ($(s).checked = false));
+    render();
+  });
   try { const saved = localStorage.getItem("yak_pc"); if (saved) $("#pc").value = saved; } catch (e) {}
   $("#pc").addEventListener("input", () => { try { localStorage.setItem("yak_pc", $("#pc").value); } catch (e) {} });
 })();
