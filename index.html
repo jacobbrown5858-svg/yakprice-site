@@ -67,7 +67,7 @@
     .brand{font-size:26px}
     h1{font-size:34px}.lede{font-size:15px;margin-bottom:20px}
     form{grid-template-columns:1fr 1fr;gap:10px}form>div:first-child{grid-column:1/-1}
-    .toolbar{gap:10px}
+    .toolbar{gap:10px}.sort select{letter-spacing:.06em;font-size:12px;padding-left:14px}.filters-toggle{letter-spacing:.08em;font-size:12px}
     .card{grid-template-columns:88px 1fr;gap:14px;padding:14px 0}
     .img{width:88px;height:88px}
     h3{font-size:17px}
@@ -99,12 +99,12 @@
     <div class="sort">
       <label for="sort">Order by</label>
       <select id="sort">
-        <option value="landed">Sort: delivered price ↑</option>
-        <option value="landed_desc">Sort: delivered price ↓</option>
-        <option value="item">Sort: item price ↑</option>
-        <option value="delivery">Sort: delivery cost ↑</option>
-        <option value="fastest">Sort: fastest delivery</option>
-        <option value="name">Sort: name A–Z</option>
+        <option value="landed">Delivered ↑</option>
+        <option value="landed_desc">Delivered ↓</option>
+        <option value="item">Item price ↑</option>
+        <option value="delivery">Delivery ↑</option>
+        <option value="fastest">Fastest</option>
+        <option value="name">Name A–Z</option>
       </select>
     </div>
     <button type="button" id="filtersToggle" class="filters-toggle" aria-expanded="false" aria-controls="filters">Filter <span id="filterCount" class="pill" hidden></span></button>
