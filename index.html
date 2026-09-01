@@ -3,81 +3,88 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fafbfc">
+<meta name="theme-color" content="#faf8f5">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap">
 <title>Yakprice — the true delivered price, wherever you are</title>
 <meta name="description" content="Yakprice compares furniture, appliance and home goods across retailers and shows the real delivered cost to your postcode — including delivery charges and click-and-collect.">
 <style>
-  :root{--ink:#14181f;--soft:#5b6472;--faint:#8b93a1;--line:#e3e6ea;--accent:#1a56db;--bg:#fafbfc;--card:#fff;--warn:#9a6206;--warnbg:#fbf1dc}
+  :root{--ink:#2a2622;--soft:#5e5750;--taupe:#8a8075;--line:#e5e1dc;--linesoft:#ebe6e0;--bg:#faf8f5;--card:#fff;--warn:#8a6a2e;--warnbg:#f3ebdd;--serif:"DM Serif Display",Georgia,serif;--sans:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
-  header{max-width:1040px;margin:0 auto;padding:28px 24px 8px;display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
-  .brand{font-weight:700;letter-spacing:-.02em;font-size:20px;margin:0}
-  .tag{font-size:13px;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:2px 10px}
-  main{max-width:1040px;margin:0 auto;padding:8px 24px 64px}
-  h1{font-size:clamp(24px,4vw,34px);line-height:1.15;letter-spacing:-.025em;margin:8px 0 6px}
-  .lede{color:var(--soft);margin:0 0 22px;max-width:60ch}
-  form{display:grid;grid-template-columns:2fr 1fr auto;gap:10px;align-items:end;margin-bottom:8px}
-  label{display:block;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-  input,select{width:100%;font:inherit;font-size:16px;min-height:44px;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
-  input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
-  .collect{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--soft);padding-bottom:11px;white-space:nowrap}
-  .collect input{width:auto}
-  .toolbar{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:10px 0 6px;flex-wrap:wrap}
-  .sort label{display:block;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-  .sort select{min-width:240px}
-  .filters-toggle{font:inherit;font-size:14px;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:0 14px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-  .filters-toggle[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
-  .pill{background:var(--accent);color:#fff;border-radius:999px;font-size:12px;padding:1px 8px}
-  .filters{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin:6px 0 10px;display:grid;gap:14px}
-  .f-label,.f-group>label{display:block;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+  header{max-width:1120px;margin:0 auto;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line)}
+  .brand{font-family:var(--serif);font-size:30px;letter-spacing:-.02em;margin:0;line-height:1}
+  .brand i{color:var(--taupe);font-style:italic}
+  .tag{font-family:var(--sans);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe)}
+  main{max-width:1120px;margin:0 auto;padding:40px 24px 72px}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--taupe);margin:0 0 10px}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(36px,5.2vw,56px);line-height:1.05;letter-spacing:-.025em;margin:0 0 14px}
+  .lede{color:var(--soft);font-size:17px;margin:0 0 30px;max-width:58ch}
+  form{display:grid;grid-template-columns:2fr 1fr auto;gap:12px;align-items:end;margin-bottom:12px}
+  label,.f-label,.sort label{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe);margin-bottom:8px}
+  input,select{width:100%;font:inherit;font-size:16px;min-height:50px;padding:12px 14px;border:1px solid var(--ink);border-radius:0;background:#fff;color:var(--ink)}
+  select{appearance:none;-webkit-appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%232a2622' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center;padding-right:38px}
+  input::placeholder{color:#a39b92}
+  input:focus,select:focus{outline:2px solid var(--ink);outline-offset:2px}
+  .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 10px}
+  .sort select{min-width:0;text-transform:uppercase;letter-spacing:.14em;font-size:13px;font-weight:600;text-align:center;text-align-last:center;padding-left:38px}
+  .sort label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .filters-toggle{font:inherit;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:0;padding:0 14px;min-height:50px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%}
+  .filters-toggle::before{content:"";width:16px;height:12px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);box-shadow:inset 0 -2px 0 0 transparent}
+  .filters-toggle[aria-expanded="true"]{background:var(--ink);color:#fff}
+  .filters-toggle[aria-expanded="true"]::before{border-color:#fff}
+  .pill{background:var(--taupe);color:#fff;border-radius:999px;font-size:11px;padding:2px 8px;letter-spacing:.05em}
+  .filters{background:#fff;border:1px solid var(--line);padding:20px;margin:0 0 14px;display:grid;gap:18px}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{font:inherit;font-size:13px;padding:0 12px;min-height:36px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
-  .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
-  .f-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:320px}
-  .f-checks{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--soft)}
-  .f-checks label{display:inline-flex;align-items:center;gap:8px;min-height:36px}
-  .f-checks input{width:18px;height:18px;min-height:0;padding:0}
-  .link-btn{font:inherit;font-size:13px;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;justify-self:start}
-  .status{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--soft);margin:6px 0 18px}
-  .results{display:grid;gap:10px}
-  .card{display:grid;grid-template-columns:96px 1fr 180px;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
-  .img{display:block;width:96px;height:96px;border-radius:8px;overflow:hidden;background:#f0f2f5}
+  .chip{font:inherit;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;min-height:38px;border-radius:0;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+  .f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:340px}
+  .f-checks{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:var(--soft)}
+  .f-checks label{display:inline-flex;align-items:center;gap:10px;min-height:38px;font-size:14px;letter-spacing:0;text-transform:none;color:var(--soft);margin:0}
+  .f-checks input{width:18px;height:18px;min-height:0;padding:0;accent-color:var(--ink)}
+  .link-btn{font:inherit;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe);background:none;border:0;padding:0;cursor:pointer;justify-self:start}
+  .status{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe);margin:14px 0 22px}
+  .results{display:grid;gap:0;border-top:1px solid var(--line)}
+  .card{display:grid;grid-template-columns:120px 1fr 200px;gap:22px;align-items:center;background:transparent;border-bottom:1px solid var(--line);padding:18px 0}
+  .img{display:block;width:120px;height:120px;overflow:hidden;background:#efece7}
   .img img{width:100%;height:100%;object-fit:cover;display:block}
-  .retailer{margin:0 0 2px;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
-  .est{text-transform:none;letter-spacing:0;font-size:11px;color:var(--warn);background:var(--warnbg);border-radius:4px;padding:1px 6px;margin-left:6px}
-  h3{margin:0 0 4px;font-size:15px;line-height:1.35;font-weight:600}
+  .retailer{margin:0 0 6px;font-size:11px;color:var(--taupe);text-transform:uppercase;letter-spacing:.18em}
+  .est{text-transform:none;letter-spacing:0;font-size:11px;color:var(--warn);background:var(--warnbg);padding:2px 7px;margin-left:8px}
+  h3{margin:0 0 6px;font-family:var(--serif);font-weight:400;font-size:19px;line-height:1.25;letter-spacing:-.01em}
   h3 a{color:inherit;text-decoration:none}
-  h3 a:hover{text-decoration:underline}
+  h3 a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
   .meta{margin:0;font-size:13px;color:var(--soft)}
   .price{text-align:right}
-  .total{margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em}
-  .break{margin:2px 0 8px;font-size:12px;color:var(--soft);line-height:1.4}
-  .na{margin:0 0 8px;font-size:13px;color:var(--warn)}
-  .go{display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;font-weight:600;padding:8px 0;min-height:44px;line-height:28px}
-  footer{max-width:1040px;margin:0 auto;padding:16px 24px 40px;border-top:1px solid var(--line);font-size:13px;color:var(--faint)}
+  .total{margin:0;font-family:var(--serif);font-size:28px;letter-spacing:-.02em;line-height:1}
+  .break{margin:6px 0 12px;font-size:12px;color:var(--soft);line-height:1.5}
+  .na{margin:0 0 12px;font-size:13px;color:var(--warn)}
+  .go{display:inline-flex;align-items:center;justify-content:center;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:#fff;background:var(--ink);text-decoration:none;padding:0 18px;min-height:44px}
+  .go:hover{background:#000}
+  footer{max-width:1120px;margin:0 auto;padding:22px 24px 48px;border-top:1px solid var(--line);font-size:13px;color:var(--taupe);line-height:1.6}
   footer a{color:var(--soft)}
   @media (max-width:720px){
-    header{padding:18px 16px 4px}main{padding:4px 16px 48px}
-    h1{font-size:24px}.lede{font-size:15px;margin-bottom:14px}
-    form{grid-template-columns:1fr 1fr;gap:8px}form>div:first-child{grid-column:1/-1}.collect{grid-column:1/-1;padding:4px 0 0}
-    .status{font-size:13px}
-    .toolbar{gap:8px}.sort{flex:1}.sort select{min-width:0;width:100%}.filters-toggle{flex:none}
+    header{padding:16px}main{padding:26px 16px 48px}
+    .brand{font-size:26px}
+    h1{font-size:34px}.lede{font-size:15px;margin-bottom:20px}
+    form{grid-template-columns:1fr 1fr;gap:10px}form>div:first-child{grid-column:1/-1}
+    .toolbar{gap:10px}
+    .card{grid-template-columns:88px 1fr;gap:14px;padding:14px 0}
+    .img{width:88px;height:88px}
+    h3{font-size:17px}
+    .price{grid-column:1/-1;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:4px}
+    .total{font-size:24px}.break{margin:4px 0 0}
     .f-row{max-width:none}
-    .card{grid-template-columns:72px 1fr;gap:12px;padding:10px;border-radius:10px}
-    .img{width:72px;height:72px}
-    h3{font-size:14px}
-    .price{grid-column:1/-1;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:8px}
-    .total{font-size:20px}.break{margin:0}
-    footer{padding:14px 16px 32px;padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+    footer{padding:16px 16px 32px;padding-bottom:calc(32px + env(safe-area-inset-bottom))}
   }
 </style>
 </head>
 <body>
 <header>
-  <p class="brand">Yakprice</p>
-  <span class="tag">Prototype · UK</span>
+  <p class="brand">Yak<i>price.</i></p>
+  <span class="tag">Prototype — UK</span>
 </header>
 <main>
+  <p class="eyebrow">Compare by delivered price</p>
   <h1>The true delivered price, wherever you are.</h1>
   <p class="lede">Search furniture, beds, lighting, garden and tools across retailers. Add your postcode and we rank by what it actually costs to get it to your door — or to collect.</p>
 
@@ -92,15 +99,15 @@
     <div class="sort">
       <label for="sort">Order by</label>
       <select id="sort">
-        <option value="landed">Delivered price: low to high</option>
-        <option value="landed_desc">Delivered price: high to low</option>
-        <option value="item">Item price: low to high</option>
-        <option value="delivery">Delivery cost: low to high</option>
-        <option value="fastest">Fastest delivery</option>
-        <option value="name">Name A–Z</option>
+        <option value="landed">Sort: delivered price ↑</option>
+        <option value="landed_desc">Sort: delivered price ↓</option>
+        <option value="item">Sort: item price ↑</option>
+        <option value="delivery">Sort: delivery cost ↑</option>
+        <option value="fastest">Sort: fastest delivery</option>
+        <option value="name">Sort: name A–Z</option>
       </select>
     </div>
-    <button type="button" id="filtersToggle" class="filters-toggle" aria-expanded="false" aria-controls="filters">Filters <span id="filterCount" class="pill" hidden></span></button>
+    <button type="button" id="filtersToggle" class="filters-toggle" aria-expanded="false" aria-controls="filters">Filter <span id="filterCount" class="pill" hidden></span></button>
   </div>
   <div id="filters" class="filters" hidden>
     <div class="f-group">

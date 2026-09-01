@@ -107,7 +107,7 @@
         </div>
         <div class="price">
           ${l.total === null ? `<p class="na">${l.note}</p>` : `<p class="total">${fmt(l.total)}</p><p class="break">${fmt(p.price)} item<br>${l.note}</p>`}
-          <a class="go" href="${p.link}" target="_blank" rel="nofollow sponsored noopener">Go to ${p.retailer.split(" ")[0]} →</a>
+          <a class="go" href="${p.link}" target="_blank" rel="nofollow sponsored noopener">View at ${p.retailer.split(" ")[0]}</a>
         </div>
       </article>`).join("");
   }
