@@ -97,19 +97,32 @@
     const label = { landed: "cheapest delivered first", landed_desc: "priciest delivered first", item: "cheapest item first", delivery: "cheapest delivery first", fastest: "fastest first", name: "A–Z" }[sort];
     rows = rows.slice(0, 60);
     $("#count").textContent = rows.length ? rows.length + " results · " + label : (collect ? "No collection options for this search" : "No matches — try a broader search or clear filters");
-    $("#results").innerHTML = rows.map(({ p, l }) => `
+    const esc = (s) => String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    $("#results").innerHTML = rows.map(({ p, l }) => {
+      const r = window.YAK_RULES[p.retailer] || {};
+      const details = [
+        ["Full listing", esc(p.title)],
+        p.brand ? ["Brand", esc(p.brand)] : null,
+        p.desc ? ["About", esc(p.desc)] : null,
+        l.total !== null ? ["Delivery", esc(l.note) + (l.days ? " · " + esc(l.days) + " days" : "")] : ["Delivery", esc(l.note)],
+        r.collect ? ["Collection", esc(r.collect.note)] : null,
+        ["Delivery rule", (r.verified ? "Verified from retailer policy" : "Estimate — not yet verified") + (r.source ? " · " + esc(r.source) : "")]
+      ].filter(Boolean).map(([k, v]) => `<div class="d-row"><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+      return `
       <article class="card">
         <a class="img" href="${p.link}" target="_blank" rel="nofollow sponsored noopener">${p.img ? `<img src="${p.img}" alt="" loading="lazy">` : ""}</a>
         <div class="body">
-          <p class="retailer">${p.retailer}${l.est ? ' <span class="est" title="Delivery rule not yet verified against the retailer policy">estimate</span>' : ""}</p>
-          <h3><a href="${p.link}" target="_blank" rel="nofollow sponsored noopener">${p.title}</a></h3>
-          <p class="meta">${p.brand ? p.brand + " · " : ""}${p.cat}${l.days ? " · " + l.days + " days" : ""}</p>
+          <p class="retailer">${esc(p.retailer)}${l.est ? ' <span class="est" title="Delivery rule not yet verified against the retailer policy">estimate</span>' : ""}</p>
+          <h3><a href="${p.link}" target="_blank" rel="nofollow sponsored noopener">${esc(p.name || p.title)}</a></h3>
+          <p class="meta">${esc(p.cat)}${l.days ? " · " + esc(l.days) + " days" : ""}</p>
+          <details class="more"><summary>Details</summary><dl>${details}</dl></details>
         </div>
         <div class="price">
-          ${l.total === null ? `<p class="na">${l.note}</p>` : `<p class="total">${fmt(l.total)}</p><p class="break">${fmt(p.price)} item<br>${l.note}</p>`}
-          <a class="go" href="${p.link}" target="_blank" rel="nofollow sponsored noopener">View at ${p.retailer.split(" ")[0]}</a>
+          ${l.total === null ? `<p class="na">${esc(l.note)}</p>` : `<p class="total">${fmt(l.total)}</p><p class="break">${fmt(p.price)} item<br>${esc(l.note)}</p>`}
+          <a class="go" href="${p.link}" target="_blank" rel="nofollow sponsored noopener">View at ${esc(p.retailer.split(" ")[0])}</a>
         </div>
-      </article>`).join("");
+      </article>`;
+    }).join("");
   }
 
   function buildRetailerChips() {
