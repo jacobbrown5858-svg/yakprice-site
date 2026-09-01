@@ -6,35 +6,66 @@
 <title>Yakprice — the true delivered price, wherever you are</title>
 <meta name="description" content="Yakprice compares furniture, appliance and home goods across retailers and shows the real delivered cost to your postcode — including delivery charges and click-and-collect.">
 <style>
-  :root{--ink:#14181f;--soft:#5b6472;--line:#e3e6ea;--accent:#1a56db;--bg:#fafbfc}
+  :root{--ink:#14181f;--soft:#5b6472;--faint:#8b93a1;--line:#e3e6ea;--accent:#1a56db;--bg:#fafbfc;--card:#fff;--warn:#9a6206;--warnbg:#fbf1dc}
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
-  main{max-width:640px;margin:0 auto;padding:12vh 24px 8vh}
-  .brand{font-weight:700;letter-spacing:-.02em;font-size:20px;margin:0 0 40px}
-  h1{font-size:clamp(28px,5vw,40px);line-height:1.15;letter-spacing:-.025em;margin:0 0 18px}
-  p{color:var(--soft);margin:0 0 16px;max-width:54ch}
-  ul{padding-left:20px;color:var(--soft);margin:0 0 32px}
-  li{margin:6px 0}
-  .tag{display:inline-block;font-size:13px;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:3px 12px;margin-bottom:22px}
-  footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--soft)}
-  a{color:var(--accent)}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+  header{max-width:1040px;margin:0 auto;padding:28px 24px 8px;display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .brand{font-weight:700;letter-spacing:-.02em;font-size:20px;margin:0}
+  .tag{font-size:13px;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:2px 10px}
+  main{max-width:1040px;margin:0 auto;padding:8px 24px 64px}
+  h1{font-size:clamp(24px,4vw,34px);line-height:1.15;letter-spacing:-.025em;margin:8px 0 6px}
+  .lede{color:var(--soft);margin:0 0 22px;max-width:60ch}
+  form{display:grid;grid-template-columns:2fr 1fr auto;gap:10px;align-items:end;margin-bottom:8px}
+  label{display:block;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
+  input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  .collect{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--soft);padding-bottom:11px;white-space:nowrap}
+  .collect input{width:auto}
+  .status{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--soft);margin:6px 0 18px}
+  .results{display:grid;gap:10px}
+  .card{display:grid;grid-template-columns:96px 1fr 180px;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .img{display:block;width:96px;height:96px;border-radius:8px;overflow:hidden;background:#f0f2f5}
+  .img img{width:100%;height:100%;object-fit:cover;display:block}
+  .retailer{margin:0 0 2px;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+  .est{text-transform:none;letter-spacing:0;font-size:11px;color:var(--warn);background:var(--warnbg);border-radius:4px;padding:1px 6px;margin-left:6px}
+  h3{margin:0 0 4px;font-size:15px;line-height:1.35;font-weight:600}
+  h3 a{color:inherit;text-decoration:none}
+  h3 a:hover{text-decoration:underline}
+  .meta{margin:0;font-size:13px;color:var(--soft)}
+  .price{text-align:right}
+  .total{margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .break{margin:2px 0 8px;font-size:12px;color:var(--soft);line-height:1.4}
+  .na{margin:0 0 8px;font-size:13px;color:var(--warn)}
+  .go{display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;font-weight:600}
+  footer{max-width:1040px;margin:0 auto;padding:16px 24px 40px;border-top:1px solid var(--line);font-size:13px;color:var(--faint)}
+  footer a{color:var(--soft)}
+  @media (max-width:720px){form{grid-template-columns:1fr 1fr}.collect{grid-column:1/-1}.card{grid-template-columns:72px 1fr}.price{grid-column:1/-1;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px}.img{width:72px;height:72px}}
 </style>
 </head>
 <body>
-<main>
+<header>
   <p class="brand">Yakprice</p>
-  <span class="tag">Coming soon</span>
+  <span class="tag">Prototype · UK</span>
+</header>
+<main>
   <h1>The true delivered price, wherever you are.</h1>
-  <p>Comparing a sofa, fridge or mattress across retailers only tells you half the story. Delivery can add £30 to £150, changes with your postcode, and sometimes the store ten minutes away will hand it to you for free.</p>
-  <p>Yakprice searches the retailers, works out the real cost to get it to <em>your</em> door — delivery included — or to collect nearby, and links you straight to the store to buy.</p>
-  <ul>
-    <li>Furniture, appliances, garden and home goods</li>
-    <li>Delivered price to your postcode, not just the sticker price</li>
-    <li>Click-and-collect shown when it saves you money</li>
-    <li>Public promo codes applied where they apply</li>
-  </ul>
-  <p>Launching first in the UK and Australia.</p>
-  <footer>Contact: <a href="mailto:hello@yakprice.com">hello@yakprice.com</a></footer>
+  <p class="lede">Search furniture, beds, lighting, garden and tools across retailers. Add your postcode and we rank by what it actually costs to get it to your door — or to collect.</p>
+
+  <form onsubmit="return false">
+    <div><label for="q">Search</label><input id="q" type="search" placeholder="mattress, sofa, drill, pendant light…" autocomplete="off"></div>
+    <div><label for="pc">Postcode</label><input id="pc" type="text" placeholder="e.g. SW1A 1AA" autocomplete="postal-code"></div>
+    <div><label for="cat">Category</label>
+      <select id="cat"><option value="">All</option><option value="mattress">Mattresses</option><option value="bed">Beds</option><option value="furniture">Furniture</option><option value="lighting">Lighting</option><option value="garden">Garden</option><option value="tools">Tools</option></select>
+    </div>
+    <label class="collect"><input id="collect" type="checkbox"> Collection only</label>
+  </form>
+  <div class="status"><span id="region">Enter a postcode to see delivered prices</span><span id="count"></span></div>
+  <div id="results" class="results"></div>
 </main>
+<footer>
+  Prototype. Prices and products are a sample from retailer feeds and may be out of date; delivery rules marked <em>estimate</em> have not yet been checked against the retailer's policy. Links go to the retailer and may earn Yakprice a commission at no cost to you. <a href="mailto:hello@yakprice.com">hello@yakprice.com</a>
+</footer>
+<script src="rules.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
