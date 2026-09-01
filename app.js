@@ -3,64 +3,84 @@
   const fmt = (n) => "£" + n.toFixed(2);
   let PRODUCTS = [];
 
-  function region(postcode) {
-    const pc = (postcode || "").toUpperCase().replace(/\s+/g, "");
-    if (!/^[A-Z]{1,2}\d/.test(pc)) return null;
-    const outward = pc.length > 4 ? pc.slice(0, pc.length - 3) : pc;
-    const area = outward.match(/^[A-Z]{1,2}/)[0];
-    const district = outward;
-    const R = window.YAK_REMOTE;
-    if (R.offshore.includes(area)) return { zone: "offshore", label: "Channel Islands / Isle of Man" };
-    if (R.areas.includes(area) || R.areas.includes(district)) return { zone: "remote", label: "Highlands, Islands or NI" };
-    return { zone: "mainland", label: "UK mainland" };
+  // --- postcode -> outward pieces --------------------------------------------------------
+  function parsePostcode(raw) {
+    const pc = (raw || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    const m = pc.match(/^([A-Z]{1,2})(\d{1,2}[A-Z]?)(\d[A-Z]{2})?$/);
+    if (!m) return null;
+    return { area: m[1], district: m[1] + m[2], full: pc };
+  }
+  function inZone(pcObj, list) {
+    if (!pcObj || !list || !list.length) return false;
+    return list.includes(pcObj.area) || list.includes(pcObj.district);
   }
 
-  function landed(p, reg, collect) {
-    const r = window.YAK_RULES[p.retailer] || { free_over: null, standard: 0, remote_surcharge: null, remote_excluded: false, collect: false, verified: false, source: "no rule" };
+  // --- product size class ------------------------------------------------------------------
+  const LARGE = /sofa|bed\b|bed frame|mattress|wardrobe|dining table|sideboard|chest of drawers|bookcase|fridge|freezer|washing machine|dishwasher|tumble|cooker|oven|desk|cabinet|shed|bench|lawn ?mower|tv\b.*(4[3-9]|5\d|6\d|7\d|8\d)"/i;
+  function classify(p, rule) {
+    switch (rule.size) {
+      case "always_small": return "small";
+      case "always_large": return "large";
+      default: return LARGE.test(p.title) || ["mattress", "bed", "furniture"].includes(p.cat) ? "large" : "small";
+    }
+  }
+
+  // --- landed cost -------------------------------------------------------------------------
+  function landed(p, pcObj, collect) {
+    const r = window.YAK_RULES[p.retailer];
+    if (!r) return null;
+    const est = !r.verified;
     if (collect) {
       if (!r.collect) return null;
-      return { total: p.price, delivery: 0, note: "Click & collect", verified: r.verified };
+      let c = r.collect.cost || 0;
+      if (r.collect.free_over != null && p.price < r.collect.free_over) c = r.collect.under_cost || c;
+      return { total: p.price + c, delivery: c, note: c ? "Click & collect " + fmt(c) : "Click & collect, free", days: "1", est, zone: null };
     }
-    if (reg && reg.zone !== "mainland" && r.remote_excluded) return { total: null, delivery: null, note: "Does not deliver to " + reg.label, verified: r.verified };
-    let d;
-    if (p.feed_delivery !== null && p.feed_delivery !== undefined) d = p.feed_delivery;       // per-product from feed
-    else if (r.free_over !== null && p.price >= r.free_over) d = 0;
-    else d = r.standard;
-    if (reg && reg.zone !== "mainland" && r.remote_surcharge !== null) d = Math.max(d, r.remote_surcharge);
-    const note = d === 0 ? "Free delivery" : "Delivery " + fmt(d) + (reg && reg.zone !== "mainland" ? " (" + reg.label + ")" : "");
-    return { total: p.price + d, delivery: d, note, verified: r.verified };
+    if (inZone(pcObj, r.zones.exclude)) return { total: null, note: "Doesn't deliver to " + pcObj.district, est };
+    const size = classify(p, r);
+    const opts = r.options[size] || r.options.small;
+    // cheapest standard option after thresholds
+    let best = null;
+    for (const o of opts) {
+      let cost = (r.feed_cost && p.feed_delivery != null) ? p.feed_delivery : o.cost;
+      if (o.free_over != null && p.price >= o.free_over) cost = 0;
+      const cand = { cost, name: o.name, days: o.days, from: !!o.from, oest: !!o.estimate };
+      if (!best || cand.cost < best.cost) best = cand;
+    }
+    let surcharged = false;
+    if (inZone(pcObj, r.zones.surcharge)) {
+      surcharged = true;
+      if (r.zones.surcharge_cost != null) best.cost = Math.max(best.cost, r.zones.surcharge_cost);
+    }
+    const noteParts = [];
+    noteParts.push(best.cost === 0 ? "Free delivery" : (best.from ? "Delivery from " : "Delivery ") + fmt(best.cost));
+    if (surcharged) noteParts.push(r.zones.surcharge_cost != null ? "remote-area rate" : "remote area: surcharge at checkout");
+    return { total: p.price + best.cost, delivery: best.cost, note: noteParts.join(" · "), days: best.days, est: est || best.oest, zone: surcharged ? "surcharge" : null };
   }
 
+  // --- search & render ----------------------------------------------------------------------
   function search(q, cat) {
     const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
     return PRODUCTS.filter((p) => (!cat || p.cat === cat) && terms.every((t) => (p.title + " " + (p.brand || "") + " " + p.retailer).toLowerCase().includes(t)));
   }
-
   function render() {
-    const q = $("#q").value.trim();
-    const pc = $("#pc").value.trim();
-    const cat = $("#cat").value;
-    const collect = $("#collect").checked;
-    const reg = region(pc);
-    $("#region").textContent = pc ? (reg ? "Delivering to " + reg.label : "Enter a valid UK postcode") : "Enter a postcode to see delivered prices";
-
-    let rows = search(q, cat).map((p) => ({ p, l: landed(p, reg, collect) })).filter((x) => x.l);
+    const q = $("#q").value.trim(), pc = $("#pc").value.trim(), cat = $("#cat").value, collect = $("#collect").checked;
+    const pcObj = parsePostcode(pc);
+    $("#region").textContent = pc ? (pcObj ? "Delivered prices for " + pcObj.district : "Enter a valid UK postcode") : "Add your postcode for delivered prices";
+    let rows = search(q, cat).map((p) => ({ p, l: landed(p, pcObj, collect) })).filter((x) => x.l);
     rows.sort((a, b) => (a.l.total ?? 1e9) - (b.l.total ?? 1e9) || a.p.price - b.p.price);
     rows = rows.slice(0, 60);
-
-    $("#count").textContent = rows.length ? rows.length + " results, cheapest delivered first" : (collect ? "No collection options in this sample yet" : "No matches — try a broader search");
+    $("#count").textContent = rows.length ? rows.length + " results · cheapest delivered first" : (collect ? "No collection options for this search" : "No matches — try a broader search");
     $("#results").innerHTML = rows.map(({ p, l }) => `
       <article class="card">
         <a class="img" href="${p.link}" target="_blank" rel="nofollow sponsored noopener">${p.img ? `<img src="${p.img}" alt="" loading="lazy">` : ""}</a>
         <div class="body">
-          <p class="retailer">${p.retailer}${l.verified ? "" : ' <span class="est" title="Delivery rule not yet verified against the retailer policy">estimate</span>'}</p>
+          <p class="retailer">${p.retailer}${l.est ? ' <span class="est" title="Delivery rule not yet verified against the retailer policy">estimate</span>' : ""}</p>
           <h3><a href="${p.link}" target="_blank" rel="nofollow sponsored noopener">${p.title}</a></h3>
-          <p class="meta">${p.brand ? p.brand + " · " : ""}${p.cat}</p>
+          <p class="meta">${p.brand ? p.brand + " · " : ""}${p.cat}${l.days ? " · " + l.days + " days" : ""}</p>
         </div>
         <div class="price">
-          ${l.total === null ? `<p class="na">${l.note}</p>` : `
-          <p class="total">${fmt(l.total)}</p>
-          <p class="break">${fmt(p.price)} item<br>${l.note}</p>`}
+          ${l.total === null ? `<p class="na">${l.note}</p>` : `<p class="total">${fmt(l.total)}</p><p class="break">${fmt(p.price)} item<br>${l.note}</p>`}
           <a class="go" href="${p.link}" target="_blank" rel="nofollow sponsored noopener">Go to ${p.retailer.split(" ")[0]} →</a>
         </div>
       </article>`).join("");
@@ -68,6 +88,6 @@
 
   fetch("data/products.json").then((r) => r.json()).then((d) => { PRODUCTS = d; render(); });
   ["#q", "#pc", "#cat", "#collect"].forEach((s) => $(s).addEventListener("input", render));
-  try { const savedPc = localStorage.getItem("yak_pc"); if (savedPc) $("#pc").value = savedPc; } catch (e) {}
+  try { const saved = localStorage.getItem("yak_pc"); if (saved) $("#pc").value = saved; } catch (e) {}
   $("#pc").addEventListener("input", () => { try { localStorage.setItem("yak_pc", $("#pc").value); } catch (e) {} });
 })();

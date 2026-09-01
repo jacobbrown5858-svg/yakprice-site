@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fafbfc">
 <title>Yakprice — the true delivered price, wherever you are</title>
 <meta name="description" content="Yakprice compares furniture, appliance and home goods across retailers and shows the real delivered cost to your postcode — including delivery charges and click-and-collect.">
 <style>
@@ -17,7 +18,7 @@
   .lede{color:var(--soft);margin:0 0 22px;max-width:60ch}
   form{display:grid;grid-template-columns:2fr 1fr auto;gap:10px;align-items:end;margin-bottom:8px}
   label{display:block;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-  input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
+  input,select{width:100%;font:inherit;font-size:16px;min-height:44px;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
   input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
   .collect{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--soft);padding-bottom:11px;white-space:nowrap}
   .collect input{width:auto}
@@ -36,10 +37,21 @@
   .total{margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em}
   .break{margin:2px 0 8px;font-size:12px;color:var(--soft);line-height:1.4}
   .na{margin:0 0 8px;font-size:13px;color:var(--warn)}
-  .go{display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;font-weight:600}
+  .go{display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;font-weight:600;padding:8px 0;min-height:44px;line-height:28px}
   footer{max-width:1040px;margin:0 auto;padding:16px 24px 40px;border-top:1px solid var(--line);font-size:13px;color:var(--faint)}
   footer a{color:var(--soft)}
-  @media (max-width:720px){form{grid-template-columns:1fr 1fr}.collect{grid-column:1/-1}.card{grid-template-columns:72px 1fr}.price{grid-column:1/-1;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px}.img{width:72px;height:72px}}
+  @media (max-width:720px){
+    header{padding:18px 16px 4px}main{padding:4px 16px 48px}
+    h1{font-size:24px}.lede{font-size:15px;margin-bottom:14px}
+    form{grid-template-columns:1fr 1fr;gap:8px}form>div:first-child{grid-column:1/-1}.collect{grid-column:1/-1;padding:4px 0 0}
+    .status{font-size:13px}
+    .card{grid-template-columns:72px 1fr;gap:12px;padding:10px;border-radius:10px}
+    .img{width:72px;height:72px}
+    h3{font-size:14px}
+    .price{grid-column:1/-1;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:8px}
+    .total{font-size:20px}.break{margin:0}
+    footer{padding:14px 16px 32px;padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+  }
 </style>
 </head>
 <body>
@@ -52,8 +64,8 @@
   <p class="lede">Search furniture, beds, lighting, garden and tools across retailers. Add your postcode and we rank by what it actually costs to get it to your door — or to collect.</p>
 
   <form onsubmit="return false">
-    <div><label for="q">Search</label><input id="q" type="search" placeholder="mattress, sofa, drill, pendant light…" autocomplete="off"></div>
-    <div><label for="pc">Postcode</label><input id="pc" type="text" placeholder="e.g. SW1A 1AA" autocomplete="postal-code"></div>
+    <div><label for="q">Search</label><input id="q" type="search" placeholder="mattress, sofa, drill, pendant light…" autocomplete="off" enterkeyhint="search"></div>
+    <div><label for="pc">Postcode</label><input id="pc" type="text" placeholder="e.g. SW1A 1AA" autocomplete="postal-code" autocapitalize="characters" enterkeyhint="done" inputmode="text"></div>
     <div><label for="cat">Category</label>
       <select id="cat"><option value="">All</option><option value="mattress">Mattresses</option><option value="bed">Beds</option><option value="furniture">Furniture</option><option value="lighting">Lighting</option><option value="garden">Garden</option><option value="tools">Tools</option></select>
     </div>
