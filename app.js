@@ -106,7 +106,7 @@
         p.desc ? ["About", esc(p.desc)] : null,
         l.total !== null ? ["Delivery", esc(l.note) + (l.days ? " · " + esc(l.days) + " days" : "")] : ["Delivery", esc(l.note)],
         r.collect ? ["Collection", esc(r.collect.note)] : null,
-        ["Delivery rule", (r.verified ? "Verified from retailer policy" : "Estimate — not yet verified") + (r.source ? " · " + esc(r.source) : "")]
+        ["Delivery rule", r.verified ? "Verified from retailer policy · " + esc(r.source || "") : "Estimate — not yet checked against the retailer's policy"]
       ].filter(Boolean).map(([k, v]) => `<div class="d-row"><dt>${k}</dt><dd>${v}</dd></div>`).join("");
       return `
       <article class="card">
@@ -135,7 +135,8 @@
       render();
     });
   }
-  fetch("data/products.json").then((r) => r.json()).then((d) => { PRODUCTS = d; buildRetailerChips(); render(); });
+  const VER = (document.currentScript && (document.currentScript.src.split("?v=")[1] || "")) || String(Date.now());
+  fetch("data/products.json?v=" + VER).then((r) => r.json()).then((d) => { PRODUCTS = d; buildRetailerChips(); render(); });
   ["#q", "#pc", "#cat", "#collect", "#pmin", "#pmax", "#freeOnly", "#verifiedOnly", "#sort"].forEach((s) => $(s).addEventListener("input", render));
   $("#filtersToggle").addEventListener("click", () => {
     const f = $("#filters"), open = f.hidden; f.hidden = !open; $("#filtersToggle").setAttribute("aria-expanded", open);
