@@ -1,0 +1,4 @@
+#!/bin/sh
+# Stamp script tags with the parent commit hash so browsers refetch app.js/rules.js after each deploy.
+v=$(git rev-parse --short HEAD 2>/dev/null || echo dev)
+sed -i '' -E "s/(app|rules)\.js\?v=[0-9a-f]+/\1.js?v=$v/g" index.html && git add index.html
